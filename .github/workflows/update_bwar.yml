@@ -2,7 +2,7 @@ name: Update bWAR CSVs Daily
 
 on:
   schedule:
-    - cron: "34 23 * * *"  # Runs at 11:32 PM UTC = 4:32 PM Pacific
+    - cron: "46 23 * * *"  # Runs at 11:32 PM UTC = 4:32 PM Pacific
   workflow_dispatch:     # Allows manual runs too
 
 jobs:
@@ -18,10 +18,11 @@ jobs:
           curl -s -A "Mozilla/5.0" https://www.baseball-reference.com/data/war_daily_bat.txt -o war_daily_bat.txt
           curl -s -A "Mozilla/5.0" https://www.baseball-reference.com/data/war_daily_pitch.txt -o war_daily_pitch.txt
 
-      - name: Commit and push
+      - name: Commit and push updated CSVs
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Your Name"
+          git config user.email "you@example.com"
+          git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_GH_TOKEN }}@github.com/igluck626/mlb-bwar-cache.git
           git add war_daily_bat.txt war_daily_pitch.txt
           git commit -m "📦 Update bWAR CSVs [automated]" || echo "No changes to commit"
-          git push
+          git push origin main
