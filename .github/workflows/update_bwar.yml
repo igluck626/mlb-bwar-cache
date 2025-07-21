@@ -1,0 +1,27 @@
+name: Update bWAR CSVs Daily
+
+on:
+  schedule:
+    - cron: "34 23 * * *"  # Runs at 11:32 PM UTC = 4:32 PM Pacific
+  workflow_dispatch:     # Allows manual runs too
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch bWAR CSVs
+        run: |
+          curl -s -A "Mozilla/5.0" https://www.baseball-reference.com/data/war_daily_bat.txt -o war_daily_bat.txt
+          curl -s -A "Mozilla/5.0" https://www.baseball-reference.com/data/war_daily_pitch.txt -o war_daily_pitch.txt
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add war_daily_bat.txt war_daily_pitch.txt
+          git commit -m "📦 Update bWAR CSVs [automated]" || echo "No changes to commit"
+          git push
